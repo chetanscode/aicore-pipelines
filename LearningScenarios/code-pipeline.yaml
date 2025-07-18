@@ -1,28 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: code-pipeline   # Must be unique across the namespace
+  name: code-pipeline
   annotations:
-    scenarios.ai.sap.com/description: "Tutorial to add custom code to SAP AI Core"
-    scenarios.ai.sap.com/name: "Code (Tutorial)"
-    executables.ai.sap.com/description: "Trains model on median house prices"
-    executables.ai.sap.com/name: "House Price (Sklearn Example)"
+    scenarios.ai.sap.com/description: "House price prediction"
+    scenarios.ai.sap.com/name: "House Price Prediction"
+    executables.ai.sap.com/description: "Runs main.py from public Docker image"
+    executables.ai.sap.com/name: "House Price Run"
   labels:
-    scenarios.ai.sap.com/id: "learning-code"
+    scenarios.ai.sap.com/id: "house-price"
     ai.sap.com/version: "1.0"
 spec:
-  imagePullSecrets:
-    - name: credstutorialrepo  
   entrypoint: mypipeline
   templates:
     - name: mypipeline
       steps:
-        - - name: mypredictor
+        - - name: runmodel
             template: mycodeblock1
 
     - name: mycodeblock1
       container:
-        image: docker.io/chetankommula/house-price:01 
+        image: docker.io/chetankommula/house-price:01
         command: ["/bin/sh", "-c"]
         args:
-          - "python /app/src/main.py"              
+          - "python /app/main.py"
