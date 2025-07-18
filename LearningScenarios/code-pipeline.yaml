@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: code-pipeline   # Must be unique across the namespace
+  name: code-pipeline # executable id, must be unique across all your workflows (YAML files), please modify this to any value (e.g. code-pipeline-12345) if you are not the only user of your SAP AI Core instance.
   annotations:
     scenarios.ai.sap.com/description: "Tutorial to add custom code to SAP AI Core"
     scenarios.ai.sap.com/name: "Code (Tutorial)"
@@ -12,17 +12,17 @@ metadata:
     ai.sap.com/version: "1.0"
 spec:
   imagePullSecrets:
-    - name: credstutorialrepo  
+    - name: credstutorialrepo # your docker registry secret
   entrypoint: mypipeline
   templates:
-    - name: mypipeline
-      steps:
-        - - name: mypredictor
-            template: mycodeblock1
+  - name: mypipeline
+    steps:
+    - - name: mypredictor
+        template: mycodeblock1
 
-    - name: mycodeblock1
-      container: 
-        image: docker.io/chetankommula/house-price:03
-        command: ["/bin/sh", "-c"]
-        args:
-          - "python /app/src/main.py"
+  - name: mycodeblock1
+    container:
+      image: docker.io/chetankommula/house-price:01 # Your docker image name
+      command: ["/bin/sh", "-c"]
+      args:
+        - "python /app/src/main.py"
