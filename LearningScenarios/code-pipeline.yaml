@@ -20,7 +20,7 @@ spec:
 
     - name: mycodeblock1
       container:
-        image: docker.io/chetankommula/house-price:01
+        image: docker.io/chetankommula/house-price:03
         command: ["/bin/sh", "-c"]
         args:
           - "python /app/main.py"
