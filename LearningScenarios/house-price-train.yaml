@@ -18,6 +18,7 @@ spec:
   arguments:
     parameters: # placeholder for string like inputs
       - name: DT_MAX_DEPTH # identifier local to this workflow
+      parallelism: 1
   templates:
     - name: mypipeline
       steps:
