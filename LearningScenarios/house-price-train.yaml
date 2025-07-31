@@ -1,16 +1,17 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: data-pipeline
   annotations:
-    scenarios.ai.sap.com/description: "Learning how to ingest data to workflows"
-    scenarios.ai.sap.com/name: "House Price (Tutorial)"
-    executables.ai.sap.com/description: "Train with live data"
-    executables.ai.sap.com/name: "training"
-    artifacts.ai.sap.com/housedataset.kind: "dataset"
-    artifacts.ai.sap.com/housemodel.kind: "model"  #  Added output artifact kind
+    scenarios.ai.sap.com/description: Learning how to ingest data to workflows
+    scenarios.ai.sap.com/name: House Price (Tutorial)
+    executables.ai.sap.com/description: Train with live data
+    executables.ai.sap.com/name: training
+    artifacts.ai.sap.com/housedataset.kind: dataset
+    artifacts.ai.sap.com/housemodel.kind: model
   labels:
-    scenarios.ai.sap.com/id: "learning-datalines"
+    scenarios.ai.sap.com/id: learning-datalines
     ai.sap.com/version: "2.0"
 spec:
   imagePullSecrets:
@@ -25,7 +26,6 @@ spec:
       steps:
         - - name: mypredictor
             template: mycodeblock1
-
     - name: mycodeblock1
       inputs:
         artifacts:
@@ -33,13 +33,16 @@ spec:
             path: /app/data/
       outputs:
         artifacts:
-          - name: housemodel                      # Output artifact name
-            path: /app/model/                     # Local path in Docker where model is saved
+          - name: housemodel
+            path: /app/model/
       container:
         image: docker.io/chetankommula/house-price:03
-        command: ["/bin/sh", "-c"]
+        command:
+          - /bin/sh
+          - -c
         env:
           - name: DT_MAX_DEPTH
-            value: "{{workflow.parameters.DT_MAX_DEPTH}}"  
+            value: "{{workflow.parameters.DT_MAX_DEPTH}}"
         args:
-          - "python /app/src/main.py"
+          - cp /argo/inputs/artifacts/housedataset /app/data/train.csv && ls
+            /app/data && python /app/src/main.py && ls /app/model
