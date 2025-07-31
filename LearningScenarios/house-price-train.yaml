@@ -30,7 +30,7 @@ spec:
       inputs:
         artifacts:
           - name: housedataset
-            path: /app/data/
+            path: /argo/inputs/artifacts/housedataset
       outputs:
         artifacts:
           - name: housemodel
