@@ -11,7 +11,7 @@ metadata:
     artifacts.ai.sap.com/housemodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
-    ai.sap.com/version: "12.0"
+    ai.sap.com/version: "14.0"
 spec:
   imagePullSecrets:
     - name: credstutorialrepo
@@ -24,7 +24,6 @@ spec:
       steps:
         - - name: mypredictor
             template: mycodeblock1
-
     - name: mycodeblock1
       inputs:
         artifacts:
@@ -38,12 +37,10 @@ spec:
             archive:
               none: {}
       container:
-        image: docker.io/chetankommula/house-price:04
+        image: docker.io/chetankommula/house-price:metrics # Make sure this tag is correct
         command: ["/bin/sh", "-c"]
         env:
           - name: DT_MAX_DEPTH
             value: "{{workflow.parameters.DT_MAX_DEPTH}}"
         args:
-          - >
-            cp /argo/inputs/artifacts/housedataset /app/data/train.csv &&
-            python /app/src/main.py
+          - "cp /argo/inputs/artifacts/housedataset /app/data/train.csv && python /app/src/main.py"
