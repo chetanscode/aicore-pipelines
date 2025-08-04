@@ -37,14 +37,10 @@ spec:
             archive:
               none: {}
       container:
-        image: docker.io/chetankommula/house-price:metrics
+        image: docker.io/chetankommula/house-price:metrics # Make sure this tag is correct
         command: ["/bin/sh", "-c"]
         env:
           - name: DT_MAX_DEPTH
             value: "{{workflow.parameters.DT_MAX_DEPTH}}"
-          - name: AICORE_EXECUTION_ID
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.annotations['ai.sap.com/execution-id']
         args:
           - "cp /argo/inputs/artifacts/housedataset /app/data/train.csv && python /app/src/main.py"
