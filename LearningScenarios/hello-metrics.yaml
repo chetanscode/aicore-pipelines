@@ -24,6 +24,7 @@ spec:
       steps:
         - - name: mypredictor
             template: mycodeblock1
+
     - name: mycodeblock1
       inputs:
         artifacts:
@@ -35,7 +36,7 @@ spec:
             globalName: housemodel
             path: /app/model/
             archive:
-              none: {{}}
+              none: {}  
       container:
         image: docker.io/chetankommula/house-price:metrics
         command: ["/bin/sh", "-c"]
