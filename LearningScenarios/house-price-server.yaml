@@ -1,50 +1,50 @@
 apiVersion: ai.sap.com/v1alpha1
 kind: ServingTemplate
 metadata:
-  name: server-pipeline # executable ID, must be unique across your SAP AI Core instance, for example use `server-pipeline-yourname-1234`
+  name: house-price-server
   annotations:
-    scenarios.ai.sap.com/description: "Learning to predict house price"
+    scenarios.ai.sap.com/description: "Create online server to make live predictions"
     scenarios.ai.sap.com/name: "House Price (Tutorial)"
-    executables.ai.sap.com/description: "Create online server to make live predictions"
+    executables.ai.sap.com/description: "Online prediction server"
     executables.ai.sap.com/name: "server"
-    artifacts.ai.sap.com/housepricemodel.kind: "model" # Suggest the kind of artifact to input.
+    artifacts.ai.sap.com/housemodel.kind: "model"  # Match output name from training
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
-    ai.sap.com/version: "1.0"
+    ai.sap.com/version: "2.0"
 spec:
   inputs:
     artifacts:
-      - name: housepricemodel # placeholder name, do not add `-` in value use only alphanumeric chars
+      - name: housemodel  # MUST match training output artifact
     parameters:
-      - name: greetmessage # placeholder name
-        type: string # required for every parameters
+      - name: greetmessage
+        type: string
   template:
     apiVersion: "serving.kserve.io/v1beta1"
     metadata:
       annotations: |
-        autoscaling.knative.dev/metric: concurrency   # condition when to scale
+        autoscaling.knative.dev/metric: concurrency
         autoscaling.knative.dev/target: 1
         autoscaling.knative.dev/targetBurstCapacity: 0
       labels: |
-        ai.sap.com/resourcePlan: starter # computing power
+        ai.sap.com/resourcePlan: starter
     spec: |
       predictor:
         imagePullSecrets:
-          - name: credstutorialrepo   # your docker registry secret
+          - name: credstutorialrepo
         minReplicas: 1
-        maxReplicas: 5    # how much to scale
+        maxReplicas: 3  # Updated to recommended max
         containers:
-        - name: kserve-container
-          image: "docker.io/chetankommula/house-server:01"
-          ports:
-            - containerPort: 9001    # customizable port
-              protocol: TCP
-          command: ["/bin/sh", "-c"]
-          args:
-            - >
-              set -e && echo "Starting" && gunicorn --chdir /app/src main:app -b 0.0.0.0:9001 # filename `main` flask variable `app`
-          env:
-            - name: STORAGE_URI # Required
-              value: "{{inputs.artifacts.housepricemodel}}" # Required reference from artifact name, see above
-            - name: greetingmessage # different name to avoid confusion
-              value: "{{inputs.parameters.greetmessage}}"
+          - name: kserve-container
+            image: docker.io/chetankommula/house-price:serve
+            ports:
+              - containerPort: 9001
+                protocol: TCP
+            command: ["/bin/sh", "-c"]
+            args:
+              - >
+                set -e && echo "Starting" && gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
+            env:
+              - name: STORAGE_URI
+                value: "{{inputs.artifacts.housemodel}}"
+              - name: greetingmessage
+                value: "{{inputs.parameters.greetmessage}}"
