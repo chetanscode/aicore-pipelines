@@ -1,20 +1,20 @@
 apiVersion: ai.sap.com/v1alpha1
 kind: ServingTemplate
 metadata:
-  name: house-price-server
+  name: server-pipeline
   annotations:
-    scenarios.ai.sap.com/description: "Create online server to make live predictions"
+    scenarios.ai.sap.com/description: "Learning to predict house price"
     scenarios.ai.sap.com/name: "House Price (Tutorial)"
-    executables.ai.sap.com/description: "Online prediction server"
+    executables.ai.sap.com/description: "Create online server to make live predictions"
     executables.ai.sap.com/name: "server"
-    artifacts.ai.sap.com/housemodel.kind: "model"  # Match output name from training
+    artifacts.ai.sap.com/housemodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
     ai.sap.com/version: "2.0"
 spec:
   inputs:
     artifacts:
-      - name: housemodel  # MUST match training output artifact
+      - name: housemodel
     parameters:
       - name: greetmessage
         type: string
@@ -32,19 +32,21 @@ spec:
         imagePullSecrets:
           - name: credstutorialrepo
         minReplicas: 1
-        maxReplicas: 3  # Updated to recommended max
+        maxReplicas: 3
         containers:
-          - name: kserve-container
-            image: docker.io/chetankommula/house-price:serve
-            ports:
-              - containerPort: 9001
-                protocol: TCP
-            command: ["/bin/sh", "-c"]
-            args:
-              - >
-                set -e && echo "Starting" && gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
-            env:
-              - name: STORAGE_URI
-                value: "{{inputs.artifacts.housemodel}}"
-              - name: greetingmessage
-                value: "{{inputs.parameters.greetmessage}}"
+        - name: kserve-container
+          image: "docker.io/chetankommula/house-price:serve"
+          ports:
+            - containerPort: 9001
+              protocol: TCP
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              set -e &&
+              echo "Starting" &&
+              gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
+          env:
+            - name: STORAGE_URI
+              value: "{{inputs.artifacts.housemodel}}"
+            - name: greetingmessage
+              value: "{{inputs.parameters.greetmessage}}"
