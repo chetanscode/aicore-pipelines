@@ -9,9 +9,11 @@ metadata:
     executables.ai.sap.com/name: "server"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
-    ai.sap.com/version: "3.0"
+    ai.sap.com/version: "4.0"
 spec:
   inputs:
+    artifacts:
+      - name: housemodel  # ✅ Needed to mount your uploaded model
     parameters:
       - name: greetmessage
         type: string
@@ -43,5 +45,7 @@ spec:
               echo "Starting Model Server" &&
               gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
           env:
+            - name: STORAGE_URI  # ✅ Mandatory to tell where the model is
+              value: "{{inputs.artifacts.housemodel}}/model.pkl"
             - name: greetingmessage
               value: "{{inputs.parameters.greetmessage}}"
