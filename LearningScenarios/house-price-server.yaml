@@ -7,14 +7,11 @@ metadata:
     scenarios.ai.sap.com/name: "House Price (Tutorial)"
     executables.ai.sap.com/description: "Create online server to make live predictions"
     executables.ai.sap.com/name: "server"
-    artifacts.ai.sap.com/housemodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
     ai.sap.com/version: "3.0"
 spec:
   inputs:
-    artifacts:
-      - name: housemodel
     parameters:
       - name: greetmessage
         type: string
@@ -46,7 +43,5 @@ spec:
               echo "Starting Model Server" &&
               gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
           env:
-            - name: STORAGE_URI
-              value: "{{inputs.artifacts.housemodel}}/model.pkl"
             - name: greetingmessage
               value: "{{inputs.parameters.greetmessage}}"
