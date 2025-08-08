@@ -10,7 +10,7 @@ metadata:
     artifacts.ai.sap.com/housemodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
-    ai.sap.com/version: "4.0"
+    ai.sap.com/version: "3.0"
 spec:
   inputs:
     artifacts:
@@ -43,10 +43,10 @@ spec:
           args:
             - >
               set -e &&
-              echo "Starting" &&
+              echo "Starting Model Server" &&
               gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
           env:
             - name: STORAGE_URI
-              value: "{{inputs.artifacts.housemodel}}"
+              value: "{{inputs.artifacts.housemodel}}/model.pkl"
             - name: greetingmessage
               value: "{{inputs.parameters.greetmessage}}"
