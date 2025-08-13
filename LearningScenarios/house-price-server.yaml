@@ -9,11 +9,11 @@ metadata:
     executables.ai.sap.com/name: "server"
   labels:
     scenarios.ai.sap.com/id: "learning-datalines"
-    ai.sap.com/version: "4.0"
+    ai.sap.com/version: "5.0"
 spec:
   inputs:
     artifacts:
-      - name: housemodel  # ✅ Needed to mount your uploaded model
+      - name: housemodel
     parameters:
       - name: greetmessage
         type: string
@@ -22,7 +22,7 @@ spec:
     metadata:
       annotations: |
         autoscaling.knative.dev/metric: concurrency
-        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/target: "1"
         autoscaling.knative.dev/targetBurstCapacity: "0"
       labels: |
         ai.sap.com/resourcePlan: starter
@@ -34,18 +34,30 @@ spec:
         maxReplicas: 3
         containers:
         - name: kserve-container
-          image: "docker.io/chetankommula/house-server:02"
+          image: "docker.io/chetankommula/house-server:03"   # <-- new tag
           ports:
-            - containerPort: 9001
+            - containerPort: 8080
               protocol: TCP
-          command: ["/bin/sh", "-c"]
-          args:
-            - >
-              set -e &&
-              echo "Starting Model Server" &&
-              gunicorn --chdir /app/src main:app -b 0.0.0.0:9001
+          command: ["gunicorn"]
+          args: ["-w","2","-b","0.0.0.0:8080","main:app"]
           env:
-            - name: STORAGE_URI  # ✅ Mandatory to tell where the model is
+            # Storage initializer will place this at /mnt/models/model.pkl
+            - name: STORAGE_URI
               value: "{{inputs.artifacts.housemodel}}/model.pkl"
+            # Our app defaults to /mnt/models/model.pkl, but set explicitly if you want:
+            - name: MODEL_PATH
+              value: "/mnt/models/model.pkl"
             - name: greetingmessage
               value: "{{inputs.parameters.greetmessage}}"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
