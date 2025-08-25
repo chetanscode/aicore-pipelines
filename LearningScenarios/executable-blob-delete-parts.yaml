@@ -36,12 +36,15 @@ spec:
       containers:
       - name: worker
         image: "docker.io/chetankommula/blob-tools:latest"
+        imagePullPolicy: Always
         command: ["python"]
         args:
           - "app.py"
           - "delete-parts"
-          - "--prefix"  ; "{{inputs.parameters.prefix}}"
-          - "--workers" ; "{{inputs.parameters.workers}}"
+          - "--prefix"
+          - "{{inputs.parameters.prefix}}"
+          - "--workers"
+          - "{{inputs.parameters.workers}}"
         env:
           - name: AZURE_ACCOUNT_URL
             value: "{{inputs.parameters.AZURE_ACCOUNT_URL}}"
