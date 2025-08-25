@@ -52,17 +52,25 @@ spec:
       containers:
       - name: worker
         image: "docker.io/chetankommula/blob-tools:latest"
+        imagePullPolicy: Always
         command: ["python"]
         args:
           - "app.py"
           - "merge-sort"
-          - "--base-prefix"      ; "{{inputs.parameters.base_prefix}}"
-          - "--folder"           ; "{{inputs.parameters.folder}}"
-          - "--csv-blob"         ; "{{inputs.parameters.csv_blob}}"
-          - "--download-workers" ; "{{inputs.parameters.download_workers}}"
-          - "--delete-workers"   ; "{{inputs.parameters.delete_workers}}"
-          - "--sort-col-index"   ; "{{inputs.parameters.sort_col_index}}"
-          - "--duckdb-threads"   ; "{{inputs.parameters.duckdb_threads}}"
+          - "--base-prefix"
+          - "{{inputs.parameters.base_prefix}}"
+          - "--folder"
+          - "{{inputs.parameters.folder}}"
+          - "--csv-blob"
+          - "{{inputs.parameters.csv_blob}}"
+          - "--download-workers"
+          - "{{inputs.parameters.download_workers}}"
+          - "--delete-workers"
+          - "{{inputs.parameters.delete_workers}}"
+          - "--sort-col-index"
+          - "{{inputs.parameters.sort_col_index}}"
+          - "--duckdb-threads"
+          - "{{inputs.parameters.duckdb_threads}}"
           - "--delete-parts"
         env:
           - name: AZURE_ACCOUNT_URL
