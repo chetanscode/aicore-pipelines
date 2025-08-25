@@ -3,12 +3,12 @@ kind: ExecutableTemplate
 metadata:
   name: blob-merge-sort
   annotations:
-    scenarios.ai.sap.com/name: "Blob Ops"
+    scenarios.ai.sap.com/name: "Code (Tutorial)"
     scenarios.ai.sap.com/description: "Merge part-*.csv, sort by 4th column, delete parts"
     executables.ai.sap.com/name: "merge-sort"
     executables.ai.sap.com/description: "Merge+Sort"
   labels:
-    ai.sap.com/version: "1.0"
+    ai.sap.com/version: "5.0"
 spec:
   inputs:
     parameters:
@@ -41,6 +41,7 @@ spec:
         type: string
   template:
     apiVersion: "v1"
+    kind: Pod
     metadata:
       labels: |
         ai.sap.com/resourcePlan: starter
