@@ -3,12 +3,12 @@ kind: ExecutableTemplate
 metadata:
   name: blob-list
   annotations:
-    scenarios.ai.sap.com/name: "Code (Tutorial)"             # was "Blob Ops"
+    scenarios.ai.sap.com/name: "Code (Tutorial)"
     scenarios.ai.sap.com/description: "List 'directories' under a prefix in Azure Blob"
     executables.ai.sap.com/name: "list"
     executables.ai.sap.com/description: "List"
   labels:
-    ai.sap.com/version: "5.0"                                 # was "1.0"
+    ai.sap.com/version: "5.0"
 spec:
   inputs:
     parameters:
@@ -25,7 +25,7 @@ spec:
         type: string
   template:
     apiVersion: "v1"
-    kind: Pod                                                # <-- important
+    kind: Pod
     metadata:
       labels: |
         ai.sap.com/resourcePlan: starter
@@ -36,12 +36,15 @@ spec:
       containers:
       - name: worker
         image: "docker.io/chetankommula/blob-tools:latest"
+        imagePullPolicy: Always
         command: ["python"]
         args:
           - "app.py"
           - "list"
-          - "--prefix" ; "{{inputs.parameters.prefix}}"
-          - "--depth"  ; "{{inputs.parameters.depth}}"
+          - "--prefix"
+          - "{{inputs.parameters.prefix}}"
+          - "--depth"
+          - "{{inputs.parameters.depth}}"
         env:
           - name: AZURE_ACCOUNT_URL
             value: "{{inputs.parameters.AZURE_ACCOUNT_URL}}"
