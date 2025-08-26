@@ -1,0 +1,32 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ExecutableTemplate
+metadata:
+  name: hello-echo
+  annotations:
+    scenarios.ai.sap.com/name: "Code (Tutorial)"
+    scenarios.ai.sap.com/description: "Minimal sanity check"
+    executables.ai.sap.com/name: "hello"
+    executables.ai.sap.com/description: "Echo"
+  labels:
+    ai.sap.com/version: "5.0"
+spec:
+  inputs:
+    parameters:
+      - name: msg
+        type: string
+        default: "it works"
+  template: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      labels:
+        ai.sap.com/resourcePlan: starter
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: echo
+          image: alpine:3.19
+          command:
+            - sh
+            - -lc
+            - "echo '{{inputs.parameters.msg}}'; sleep 1"
